@@ -1,4 +1,6 @@
 node_modules
+playground.sql
+playground.txt
 .env.*
 .env-test
 .env-development
