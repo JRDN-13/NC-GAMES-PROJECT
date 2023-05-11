@@ -26,9 +26,12 @@ describe("/api/categories", () => {
       return request(app)
         .get("/api/categories")
         .expect(200)
-        .then((response) => {
-          expect(typeof response.body[0].slug).toBe("string");
-          expect(typeof response.body[0].description).toBe("string");
+        .then(({ body }) => {
+          expect(body.length).toBe(7);
+          body.forEach((category) => {
+            expect(typeof category.slug).toBe("string");
+            expect(typeof category.description).toBe("string");
+          });
         });
     });
     it("GET - status 404: responds with error when passed an invalid url", () => {
@@ -36,3 +39,4 @@ describe("/api/categories", () => {
     });
   });
 });
+
