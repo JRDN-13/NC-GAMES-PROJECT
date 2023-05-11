@@ -2,6 +2,7 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const request = require("supertest");
 const app = require("../app");
+const endpoints = require("../endpoints.json")
 const {
   categoryData,
   commentData,
@@ -18,7 +19,7 @@ describe("/api/categories", () => {
       return request(app)
         .get("/api/categories")
         .expect(200)
-        .then(({body}) => {
+        .then(({ body }) => {
           expect(body.categories.length).toBe(4);
         });
     });
@@ -40,3 +41,15 @@ describe("/api/categories", () => {
   });
 });
 
+describe("/api", () => {
+  describe("GET", () => {
+    it("GET - status 200: repsonds with JSON describing all available end points on the api", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.endpoints).toEqual(endpoints);
+        });
+    });
+  });
+});
