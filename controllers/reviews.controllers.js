@@ -8,3 +8,9 @@ exports.getReviewById = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.getReviews = (req, res, next) => {
+  fetchReviews().then((reviews) => {
+      res.status(200).send({reviews})
+  })
+}

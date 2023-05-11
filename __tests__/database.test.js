@@ -92,3 +92,38 @@ describe("/api/reviews/:review_id", () => {
     });
   });
 });
+
+describe("/api/reviews", () => {
+  describe("GET", () => {
+    it("GET - status 200: responds with an array of review objects of correct length", () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.reviews.length).toBe(13);
+        });
+    });
+    it("GET - status 200: responds with a review object with the correct properties", () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.reviews[0].comment_count).toBe("0");
+          body.reviews.forEach((review) => {
+            expect(typeof review.owner).toBe("string");
+            expect(typeof review.title).toBe("string");
+            expect(typeof review.review_id).toBe("number");
+            expect(typeof review.category).toBe("string");
+            expect(typeof review.review_img_url).toBe("string");
+            expect(typeof review.created_at).toBe("string");
+            expect(typeof review.votes).toBe("number");
+            expect(typeof review.designer).toBe("string");
+            expect(typeof review.comment_count).toBe("string");
+          });
+        });
+    });
+    it("GET - status 404: responds with error when passed an invalid url", () => {
+      return request(app).get("/api/nonsense").expect(404);
+    });
+  });
+});
