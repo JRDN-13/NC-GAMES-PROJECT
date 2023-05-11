@@ -2,7 +2,7 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const request = require("supertest");
 const app = require("../app");
-const endpoints = require("../endpoints.json")
+const endpoints = require("../endpoints.json");
 const {
   categoryData,
   commentData,
@@ -49,6 +49,45 @@ describe("/api", () => {
         .expect(200)
         .then(({ body }) => {
           expect(body.endpoints).toEqual(endpoints);
+        });
+    });
+  });
+});
+
+describe("/api/reviews/:review_id", () => {
+  describe("GET", () => {
+    it("GET - status 200: responds with an object of review data by ID with correct values", () => {
+      return request(app)
+        .get("/api/reviews/1")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.review.review_id).toBe(1);
+          expect(body.review.title).toBe("Agricola");
+          expect(body.review.category).toBe("euro game");
+          expect(body.review.designer).toBe("Uwe Rosenberg");
+          expect(body.review.owner).toBe("mallionaire");
+          expect(body.review.review_body).toBe("Farmyard fun!");
+          expect(body.review.review_img_url).toBe(
+            "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700"
+          );
+          expect(body.review.created_at).toBe("2021-01-18T10:00:20.514Z");
+          expect(body.review.votes).toBe(1);
+        });
+    });
+    it("GET - status 404: responds with error message if resource not found", () => {
+      return request(app)
+        .get("/api/reviews/100")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Review not found!");
+        });
+    });
+    it("GET - status 400: responds with error message if invalid ID provided", () => {
+      return request(app)
+        .get("/api/reviews/hello")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request!");
         });
     });
   });
