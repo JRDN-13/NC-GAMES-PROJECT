@@ -1,7 +1,7 @@
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const request = require("supertest");
-const app = require("../app");
+const {app} = require("../app");
 const endpoints = require("../endpoints.json");
 const {
   categoryData,
