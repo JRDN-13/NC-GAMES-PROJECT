@@ -3,6 +3,7 @@ const seed = require("../db/seeds/seed");
 const request = require("supertest");
 const app = require("../app");
 const endpoints = require("../endpoints.json");
+const utils = require("../db/seeds/utils");
 const {
   categoryData,
   commentData,
@@ -127,3 +128,50 @@ describe("/api/reviews", () => {
     });
   });
 });
+
+describe("/api/reviews/:review_id/comments", () => {
+  describe("GET", () => {
+    it("GET - status 200: responds with an array of comments for the given review_id with correct proeprties", () => {
+      return request(app)
+        .get("/api/reviews/2/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comments.length).toBe(3);
+          body.comments.forEach((comment) => {
+            expect(typeof comment.comment_id).toBe("number");
+            expect(typeof comment.votes).toBe("number");
+            expect(typeof comment.created_at).toBe("string");
+            expect(typeof comment.author).toBe("string");
+            expect(typeof comment.body).toBe("string");
+            expect(typeof comment.review_id).toBe("number");
+          });
+        });
+    });
+    it("GET - status 200: reponds with empty array if valid ID but no review", () => {
+      return request(app)
+        .get("/api/reviews/1/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comments).toEqual([]);
+        });
+    });
+    it("GET - status 400: responds with error message if invalid ID provided", () => {
+      return request(app)
+        .get("/api/reviews/hello/comments")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request!");
+        });
+    });
+    it("GET - status 404: responds with error message if resource not found", () => {
+      return request(app)
+        .get("/api/reviews/100/comments")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Review not found!");
+        });
+    });
+  });
+});
+
+
