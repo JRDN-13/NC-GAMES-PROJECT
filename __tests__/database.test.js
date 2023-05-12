@@ -143,7 +143,7 @@ describe("/api/reviews/:review_id/comments", () => {
             expect(typeof comment.created_at).toBe("string");
             expect(typeof comment.author).toBe("string");
             expect(typeof comment.body).toBe("string");
-            expect(typeof comment.review_id).toBe("number");
+            expect(comment.review_id).toBe(2);
           });
         });
     });
@@ -173,5 +173,3 @@ describe("/api/reviews/:review_id/comments", () => {
     });
   });
 });
-
-
