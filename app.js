@@ -9,6 +9,8 @@ const {
   postComment,
 } = require("./controllers/reviews.controllers");
 
+app.use(express.json())
+
 app.get("/api/categories", getCategories);
 
 app.get("/api", getApiData);
@@ -18,6 +20,8 @@ app.get("/api/reviews/:review_id", getReviewById);
 app.get("/api/reviews", getReviews);
 
 app.get("/api/reviews/:review_id/comments", getCommentsByReviewId);
+
+app.post("/api/reviews/:review_id/comments", postComment);
 
 app.use((err, req, res, next) => {
   if (err.status) {

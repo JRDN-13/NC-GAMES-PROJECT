@@ -32,3 +32,14 @@ exports.fetchCommentsByReviewId = (review_id) => {
       return result.rows;
     });
 };
+
+exports.insertComment = (newComment) => {
+  const { body, username } = newComment;
+  return checkAuthor(username)
+  .then(() => {
+    return db.query(`INSERT INTO comments (body) VALUES ($1) RETURNING*;`, [body]) 
+  })
+ .then(({rows}) => {
+    return rows[0]
+})
+}

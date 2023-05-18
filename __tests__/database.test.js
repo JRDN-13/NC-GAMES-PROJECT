@@ -173,3 +173,17 @@ describe("/api/reviews/:review_id/comments", () => {
     });
   });
 });
+
+// describe("/api/reviews/:review_id/comments", () => {
+//   describe("POST", () => {
+//     it.only("POST - status 201: request accepts an object with username & body properties and responds with posted comment", () => {
+//       return request(app)
+//         .post("/api/reviews/3/comments")
+//         .expect(201)
+//         .send({ body: "top binz", username: "mallionaire"})
+//         .then(({ body }) => {
+//           expect(body.comment).toBe("top binz");
+//         });
+//     });
+//   });
+// });
