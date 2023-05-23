@@ -272,6 +272,7 @@ describe("/api/reviews/:review_id", () => {
     });
   });
 });
+
 describe(" /api/comments/:comment_id", () => {
   describe("DELETE", () => {
     it("DELETE - status 204: should return status code and delete the given comment by comment_id", () => {
@@ -304,4 +305,21 @@ describe(" /api/comments/:comment_id", () => {
   });
 });
 
-
+describe("/api/users", () => {
+  describe("GET", () => {
+    it("GET - status 200: response with an array of objects with correct proeprties and correct amount of data", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.users.length).toBe(4);
+          expect(typeof body.users[0].username).toBe("string");
+          expect(typeof body.users[0].name).toBe("string");
+          expect(typeof body.users[0].avatar_url).toBe("string");
+        });
+    });
+    it("GET - status 404: responds with error when passed an invalid url", () => {
+      return request(app).get("/api/nonsense").expect(404);
+    });
+  });
+});

@@ -10,6 +10,7 @@ const {
   patchVotes,
 } = require("./controllers/reviews.controllers");
 const { deleteComment } = require("./controllers/comments.controllers");
+const { getUsers } = require("./controllers/users.controller");
 
 app.use(express.json());
 
@@ -28,6 +29,8 @@ app.post("/api/reviews/:review_id/comments", postComment);
 app.patch("/api/reviews/:review_id", patchVotes);
 
 app.delete("/api/comments/:comment_id", deleteComment);
+
+app.get("/api/users", getUsers);
 
 app.use((err, req, res, next) => {
   if (err.status) {
