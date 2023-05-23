@@ -7,6 +7,7 @@ const {
   getReviews,
   getCommentsByReviewId,
   postComment,
+  patchVotes,
 } = require("./controllers/reviews.controllers");
 
 app.use(express.json())
@@ -23,6 +24,8 @@ app.get("/api/reviews/:review_id/comments", getCommentsByReviewId);
 
 app.post("/api/reviews/:review_id/comments", postComment);
 
+app.patch("/api/reviews/:review_id", patchVotes);
+
 app.use((err, req, res, next) => {
   if (err.status) {
     res.status(err.status).send({ msg: err.msg });
@@ -36,6 +39,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
+  console.log(err)
   res.status(500).send({ msg: "Internal Server Error" });
 });
 
