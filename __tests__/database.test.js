@@ -231,12 +231,14 @@ describe("/api/reviews/:review_id", () => {
         .expect(200)
         .then(({ body }) => {
           expect(body.review.review_id).toBe(1);
-          expect(body.review.title).toBe("Agricola")
-          expect(body.review.category).toBe("euro game")
-          expect(body.review.designer).toBe("Uwe Rosenberg")
-          expect(body.review.owner).toBe("mallionaire")
-          expect(body.review.review_body).toBe("Farmyard fun!")
-          expect(body.review.review_img_url).toBe("https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700")
+          expect(body.review.title).toBe("Agricola");
+          expect(body.review.category).toBe("euro game");
+          expect(body.review.designer).toBe("Uwe Rosenberg");
+          expect(body.review.owner).toBe("mallionaire");
+          expect(body.review.review_body).toBe("Farmyard fun!");
+          expect(body.review.review_img_url).toBe(
+            "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700"
+          );
           expect(body.review.votes).toBe(101);
         });
     });
@@ -270,3 +272,36 @@ describe("/api/reviews/:review_id", () => {
     });
   });
 });
+describe(" /api/comments/:comment_id", () => {
+  describe("DELETE", () => {
+    it("DELETE - status 204: should return status code and delete the given comment by comment_id", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+        .then(() => {
+          return db.query(`SELECT * FROM comments WHERE comment_id = 1`);
+        })
+        .then(({ rows }) => {
+          expect(rows.length).toBe(0);
+        });
+    });
+    it("DELETE - status 400: when given an invalid comment id rejects and returns status", () => {
+      return request(app)
+        .delete("/api/comments/hello")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request!");
+        });
+    });
+    it("DELETE - status 404: when given a valid out of range comment id rejects and returns status", () => {
+      return request(app)
+        .delete("/api/comments/10000")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Comment not found!");
+        });
+    });
+  });
+});
+
+

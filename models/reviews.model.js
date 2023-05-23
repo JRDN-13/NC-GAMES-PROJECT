@@ -1,5 +1,5 @@
 const db = require("../db/connection");
-const { checkExists, checkAuthor } = require("../db/seeds/utils");
+const { checkExists } = require("../db/seeds/utils");
 
 exports.fetchReviewById = (review_id) => {
   return db
@@ -48,10 +48,10 @@ exports.insertComment = (body, review_id, username) => {
 
 exports.updateVotes = (inc_votes, review_id) => {
   return db
-    .query(`UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING*;`, [
-      inc_votes,
-      review_id,
-    ])
+    .query(
+      `UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING*;`,
+      [inc_votes, review_id]
+    )
     .then(({ rows }) => {
       if (rows.length === 0) {
         return Promise.reject({ status: 404, msg: "Review not found" });
