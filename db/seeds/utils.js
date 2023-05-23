@@ -33,3 +33,14 @@ exports.checkExists = (review_id) => {
       }
     });
 };
+
+exports.checkAuthor = (username) => {
+  return db
+    .query(`SELECT * FROM users WHERE usernamae = $1`, [username])
+    .then((result) => {
+      if (result.rows.length === 0) {
+        console.log(result)
+        return Promise.reject({ status: 404, msg: "Review not found!" });
+      }
+    });
+};

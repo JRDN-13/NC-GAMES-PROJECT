@@ -25,10 +25,37 @@ exports.fetchReviews = () => {
 exports.fetchCommentsByReviewId = (review_id) => {
   return checkExists(review_id)
     .then(() => {
-      return db.query(`SELECT * FROM comments WHERE review_id = $1 GROUP BY comment_id ORDER BY created_at DESC;`,
-      [review_id]);
+      return db.query(
+        `SELECT * FROM comments WHERE review_id = $1 GROUP BY comment_id ORDER BY created_at DESC;`,
+        [review_id]
+      );
     })
     .then((result) => {
       return result.rows;
+    });
+};
+
+exports.insertComment = (body, review_id, username) => {
+  return db
+    .query(
+      `INSERT INTO comments (body, review_id, author) VALUES ($1, $2, $3) RETURNING*;`,
+      [body, review_id, username]
+    )
+    .then((result) => {
+      return result.rows[0];
+    });
+};
+
+exports.updateVotes = (inc_votes, review_id) => {
+  return db
+    .query(`UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING*;`, [
+      inc_votes,
+      review_id,
+    ])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Review not found" });
+      }
+      return rows[0];
     });
 };

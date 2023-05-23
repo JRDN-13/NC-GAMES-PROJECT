@@ -1,7 +1,7 @@
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const request = require("supertest");
-const {app} = require("../app");
+const { app } = require("../app");
 const endpoints = require("../endpoints.json");
 const utils = require("../db/seeds/utils");
 const {
@@ -169,6 +169,103 @@ describe("/api/reviews/:review_id/comments", () => {
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toBe("Review not found!");
+        });
+    });
+  });
+});
+
+describe("/api/reviews/:review_id/comments", () => {
+  describe("POST", () => {
+    it("POST - status 201: request accepts an object with username & body properties and responds with posted comment", () => {
+      return request(app)
+        .post("/api/reviews/3/comments")
+        .expect(201)
+        .send({ username: "mallionaire", body: "top binz" })
+        .then(({ body }) => {
+          expect(body.comment.body).toBe("top binz");
+        });
+    });
+    it("POST - status 400: responds with error message if invalid ID provided", () => {
+      return request(app)
+        .post("/api/reviews/hello/comments")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request!");
+        });
+    });
+    it("POST - status 404: responds with error message if resource not found", () => {
+      return request(app)
+        .get("/api/reviews/100/comments")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Review not found!");
+        });
+    });
+    it("POST - status 400: responsed with error message if not passed a body", () => {
+      return request(app)
+        .post("/api/reviews/3/comments")
+        .expect(400)
+        .send({ username: "mallionaire" })
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request!");
+        });
+    });
+    it("POST - status 400: responsed with error message if not passed a username", () => {
+      return request(app)
+        .post("/api/reviews/3/comments")
+        .expect(400)
+        .send({ body: "top banana" })
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request!");
+        });
+    });
+  });
+});
+
+describe("/api/reviews/:review_id", () => {
+  describe("PATCH", () => {
+    it("PATCH - status 200: request accepts an increase vote object and updates the current vote for that review and returns updated review", () => {
+      return request(app)
+        .patch("/api/reviews/1")
+        .send({ inc_votes: 100 })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.review.review_id).toBe(1);
+          expect(body.review.title).toBe("Agricola")
+          expect(body.review.category).toBe("euro game")
+          expect(body.review.designer).toBe("Uwe Rosenberg")
+          expect(body.review.owner).toBe("mallionaire")
+          expect(body.review.review_body).toBe("Farmyard fun!")
+          expect(body.review.review_img_url).toBe("https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700")
+          expect(body.review.votes).toBe(101);
+        });
+    });
+    it("PATCH - status 200: request accepts an decrease vote object and updates the current vote for that review and returns updated review", () => {
+      return request(app)
+        .patch("/api/reviews/12")
+        .send({ inc_votes: -101 })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.review.review_id).toBe(12);
+          expect(body.review.votes).toBe(-1);
+        });
+    });
+    it("PATCH - status 400: responds with error message if resource not found", () => {
+      return request(app)
+        .patch("/api/reviews/100")
+        .send({ inc_votes: -101 })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Review not found");
+        });
+    });
+    it("PATCH - status 404: responds with error message if invalid ID provided", () => {
+      return request(app)
+        .patch("/api/reviews/hello")
+        .send({ inc_votes: -101 })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request!");
         });
     });
   });
