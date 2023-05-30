@@ -11,6 +11,9 @@ const {
 } = require("./controllers/reviews.controllers");
 const { deleteComment } = require("./controllers/comments.controllers");
 const { getUsers } = require("./controllers/users.controller");
+const cors = require("cors");
+
+app.use(cors());
 
 app.use(express.json());
 
